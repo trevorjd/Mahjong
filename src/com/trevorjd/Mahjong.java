@@ -42,7 +42,7 @@ public class Mahjong
         WINTER,
         PLUM,
         ORCHID,
-        JIUHUA,
+        JUHUA,
         BAMBOO,
         DUMMY;
     }

@@ -79,7 +79,7 @@ public class MahjongDeck
     private void addOneSetFlowers()
     {
         deck.add(new MahjongTile(TileSuit.FLOWERS, TileValue.PLUM));
-        deck.add(new MahjongTile(TileSuit.FLOWERS, TileValue.JIUHUA));
+        deck.add(new MahjongTile(TileSuit.FLOWERS, TileValue.JUHUA));
         deck.add(new MahjongTile(TileSuit.FLOWERS, TileValue.BAMBOO));
         deck.add(new MahjongTile(TileSuit.FLOWERS, TileValue.ORCHID));
     }
@@ -106,7 +106,7 @@ public class MahjongDeck
         {
             int randomIndex = rand.nextInt(deck.size());
             tile = new MahjongTile(deck.get(randomIndex).getSuit(), deck.get(randomIndex).getValue());
-            newDeck.add(new MahjongTile(tile.getSuit(), tile.getValue(), new TileLoc(tile.row, tile.col, tile.layer)));
+            newDeck.add(new MahjongTile(tile.getSuit(), tile.getValue()));
             deck.remove(randomIndex);
 
             boolean removedPair = false;
@@ -121,7 +121,7 @@ public class MahjongDeck
                     {
                         if(deck.get(i).getSuit().equals(TileSuit.SEASONS))
                         {
-                            newDeck.add(new MahjongTile(deck.get(i).getSuit(), deck.get(i).getValue(), new TileLoc(deck.get(i).row, deck.get(i).col, deck.get(i).layer)));
+                            newDeck.add(new MahjongTile(deck.get(i).getSuit(), deck.get(i).getValue()));
                             deck.remove(i);
                             removedPair = true;
                         } else i++;
@@ -131,7 +131,7 @@ public class MahjongDeck
                         {
                             if(deck.get(i).getSuit().equals(TileSuit.FLOWERS))
                             {
-                                newDeck.add(new MahjongTile(deck.get(i).getSuit(), deck.get(i).getValue(), new TileLoc(deck.get(i).row, deck.get(i).col, deck.get(i).layer)));
+                                newDeck.add(new MahjongTile(deck.get(i).getSuit(), deck.get(i).getValue()));
                                 deck.remove(i);
                                 removedPair = true;
                             } else i++;
@@ -140,7 +140,7 @@ public class MahjongDeck
                             if (deck.get(i).getSuit().equals(tile.getSuit())
                                     && deck.get(i).getValue().equals(tile.getValue()))
                             {
-                                newDeck.add(new MahjongTile(deck.get(i).getSuit(), deck.get(i).getValue(), new TileLoc(deck.get(i).row, deck.get(i).col, deck.get(i).layer)));
+                                newDeck.add(new MahjongTile(deck.get(i).getSuit(), deck.get(i).getValue()));
                                 deck.remove(i);
                                 removedPair = true;
                             } else
@@ -166,7 +166,7 @@ public class MahjongDeck
     public MahjongTile dealTile()
     {
         MahjongTile tile = deck.get(0);
-        MahjongTile newTile = new MahjongTile(tile.getSuit(), tile.getValue(), new TileLoc(tile.row, tile.col, tile.layer));
+        MahjongTile newTile = new MahjongTile(tile.getSuit(), tile.getValue());
         deck.remove(0);
         return newTile;
     }

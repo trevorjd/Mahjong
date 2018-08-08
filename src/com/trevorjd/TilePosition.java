@@ -1,30 +1,38 @@
 package com.trevorjd;
 
+import javax.swing.*;
+
 public class TilePosition
 {
-    public int row;
-    public int col;
-    public int layer;
+    protected int row;
+    protected int col;
+    protected int layer;
     private MahjongTile tile;
+    private JButton button;
 
-    public TilePosition()
+    protected TilePosition()
     {
 
     }
 
-    public TilePosition(TileLoc tl)
+    protected TilePosition(TileLoc tl)
     {
-        setPosition(tl);
+        setLocation(tl);
     }
 
-    public void setPosition(TileLoc tl)
+    protected void setLocation(TileLoc tl)
     {
         this.row = tl.row;
         this.col = tl.col;
         this.layer = tl.layer;
     }
 
-    public MahjongTile getTile()
+    protected TileLoc getLocation()
+    {
+        return new TileLoc(row, col, layer);
+    }
+
+    protected MahjongTile getTile()
     {
         return tile;
     }
@@ -32,5 +40,15 @@ public class TilePosition
     public void setTile(MahjongTile tile)
     {
         this.tile = tile;
+    }
+
+    public JButton getButton()
+    {
+        return button;
+    }
+
+    public void setButton(JButton button)
+    {
+        this.button = button;
     }
 }

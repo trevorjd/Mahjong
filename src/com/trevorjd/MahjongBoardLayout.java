@@ -8,8 +8,7 @@ import static com.trevorjd.Mahjong.MAXROW;
 import static com.trevorjd.Mahjong.BoardLayout;
 public class MahjongBoardLayout
 {
-    private ArrayList[] layers;
-    private ArrayList<TilePosition> layerDefintion;
+    private TilePosition positions[][][];
     private String layoutDef[][];
 
     public MahjongBoardLayout(BoardLayout layout)
@@ -20,7 +19,7 @@ public class MahjongBoardLayout
             MAXROW = 16;
             MAXCOL = 30;
             MAXLAY = 5;
-            layers = new ArrayList[MAXLAY];
+            positions = new TilePosition[MAXROW][MAXCOL][MAXLAY];
             layoutDef = new String[MAXROW][MAXLAY];
 
             layoutDef[0][0]  = "00 10 10 10 10 10 10 10 10 10 10 10 10 00 00";
@@ -110,7 +109,6 @@ public class MahjongBoardLayout
 
             for (int layer = 0; layer < MAXLAY; layer++)
             {
-                layerDefintion = new ArrayList<TilePosition>();
                 for (int row = 0; row < MAXROW; row++)
                 {
                     for(int col = 0; col < MAXCOL; col++)
@@ -118,70 +116,49 @@ public class MahjongBoardLayout
                         String s = layoutDef[row][layer].replace(" ", "");
                         if('1' - s.charAt(col) == 0)
                         {
-                            layerDefintion.add(new TilePosition(new TileLoc(row, col, layer)));
+                            positions[row][col][layer] = new TilePosition(new TileLoc(row, col, layer));
                         }
                     }
                 }
-                layers[layer] = layerDefintion;
             }
         }
     }
 
-    protected void displayStructure()
-    {
-        for (int layer = 0; layer < MAXLAY; layer++)
-        {
-            layerDefintion = layers[layer];
-            for (TilePosition tp : layerDefintion)
-            {
-                System.out.println("layer: " + layer + " validpos: " + tp.layer + " " + tp.row + " " + tp.col);
-            }
-        }
-    }
 
     protected void displayContents()
     {
         for (int layer = 0; layer < MAXLAY; layer++)
         {
-            layerDefintion = layers[layer];
-            for (TilePosition tp : layerDefintion)
+            for (int row = 0; row < MAXROW; row++)
             {
-                String s; String v;
-                if(tp.getTile() != null)
+                for(int col = 0; col < MAXCOL; col++)
                 {
-                    s = String.valueOf(tp.getTile().getSuit());
-                } else s = "null";
+                    String s; String v;
+                    if(positions[row][col][layer].getTile() != null)
+                    {
+                        s = String.valueOf(positions[row][col][layer].getTile().getSuit());
+                    } else s = "null";
 
-                if(tp.getTile() != null)
-                {
-                    v = String.valueOf(tp.getTile().getValue());
-                } else v = "null";
-                System.out.println("validpos: " + tp.layer + " " + tp.row + " " + tp.col
-                        + " " + s + " " + v);
+                    if(positions[row][col][layer].getTile() != null)
+                    {
+                        v = String.valueOf(positions[row][col][layer].getTile().getValue());
+                    } else v = "null";
+                    System.out.println("validpos: " + layer + " " + row + " " + col
+                            + " " + s + " " + v);
+                }
             }
         }
     }
 
-    public ArrayList<TilePosition> getLayer(int layer)
+
+    public void addTP(TilePosition tp)
     {
-        return layers[layer];
+        positions[tp.row][tp.col][tp.layer] = tp;
     }
 
-    public int getNumberofLayers()
+    public TilePosition getTP(TileLoc tl)
     {
-        return layers.length;
-    }
-
-    public void addTile(MahjongTile tile, TilePosition tp)
-    {
-        ArrayList<TilePosition> thisLayer = layers[tile.layer];
-        for (TilePosition thisTP : thisLayer)
-        {
-            if(thisTP.row == tp.row && thisTP.col == tp.col && thisTP.layer == tp.layer)
-            {
-                thisTP.setTile(tile);
-            }
-        }
+        return positions[tl.row][tl.col][tl.layer];
     }
 
     public int getMAXROW() { return MAXROW; }
@@ -189,4 +166,60 @@ public class MahjongBoardLayout
     public int getMAXCOL() { return MAXCOL; }
 
     public int getMAXLAY() { return MAXLAY; }
+
+    protected ArrayList<TilePosition> getLayer(int layer)
+    {
+        ArrayList<TilePosition> result = new ArrayList<TilePosition>();
+        for (int row = 0; row < MAXROW; row++)
+        {
+            for (int col = 0; col < MAXCOL; col++)
+            {
+                if(positions[row][col][layer] != null)
+                {
+                    result.add(positions[row][col][layer]);
+                }
+            }
+        }
+        return result;
+    }
+
+    protected ArrayList<TilePosition> getPositions()
+    {
+        ArrayList<TilePosition> result = new ArrayList<TilePosition>();
+        for (int row = 0; row < MAXROW; row++)
+        {
+            for (int col = 0; col < MAXCOL; col++)
+            {
+                for (int lay = 0; lay < MAXCOL; lay++)
+                {
+                    if(positions[row][col][lay] != null)
+                    {
+                        result.add(positions[row][col][lay]);
+                    }
+                }
+
+            }
+        }
+        return result;
+    }
+
+    protected ArrayList<TilePosition> getLocations()
+    {
+        ArrayList<TilePosition> result = new ArrayList<TilePosition>();
+        for (int row = 0; row < MAXROW; row++)
+        {
+            for (int col = 0; col < MAXCOL; col++)
+            {
+                for (int lay = 0; lay < MAXLAY; lay++)
+                {
+                    if(positions[row][col][lay] != null)
+                    {
+                        result.add(new TilePosition(new TileLoc(row, col, lay)));
+                    }
+                }
+
+            }
+        }
+        return result;
+    }
 }
