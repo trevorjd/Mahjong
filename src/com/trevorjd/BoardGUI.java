@@ -91,7 +91,7 @@ public class BoardGUI
         f.setLayout(null);
     }
 
-    protected JButton addButton(TilePosition tp)
+    protected JButton makeButton(TilePosition tp)
     {
         TileSuit suit = tp.getTile().getSuit();
         TileValue value = tp.getTile().getValue();
@@ -119,6 +119,7 @@ public class BoardGUI
         //button.setDisabledIcon(icon);
         button.setVerticalTextPosition(SwingConstants.CENTER);
         button.setHorizontalTextPosition(SwingConstants.CENTER);
+        /*
         button.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent e)
@@ -129,8 +130,15 @@ public class BoardGUI
                 }
             }
         );
-        layeredPane.add(button, tp.layer);
+        */
         return button;
+    }
+
+    protected void addButton(TilePosition tp)
+    {
+        JButton button = tp.getButton();
+        button.setEnabled(tp.isEnabled());
+        layeredPane.add(button, tp.layer);
     }
 
     protected void setGUIVisibility(boolean visible)

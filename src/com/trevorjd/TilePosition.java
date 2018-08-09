@@ -9,15 +9,17 @@ public class TilePosition
     protected int layer;
     private MahjongTile tile;
     private JButton button;
+    private boolean enabled;
 
     protected TilePosition()
     {
-
+        enabled = true;
     }
 
     protected TilePosition(TileLoc tl)
     {
         setLocation(tl);
+        enabled = true;
     }
 
     protected void setLocation(TileLoc tl)
@@ -51,4 +53,16 @@ public class TilePosition
     {
         this.button = button;
     }
+
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
+    }
+
+    public boolean hasTile() { if (tile != null) return true; else return false; }
 }

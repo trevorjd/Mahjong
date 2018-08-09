@@ -11,10 +11,8 @@ public class MahjongBoard
     // each tile is 2x2, thus allowing tiles to overlap/obstruct neighbours by half
 
     //Object[int row][int layer][com.trevorjd.MahjongTile]
-    TilePosition board[][][];
     BoardGUI gui;
     MahjongDeck deck;
-    MahjongTile tile;
     MahjongBoardLayout gameBoard;
 
     public MahjongBoard()
@@ -25,7 +23,6 @@ public class MahjongBoard
         //deck.display();
         //gameBoard = new MahjongBoardLayout(BoardLayout.TURTLE);
         //gameBoard.displayContents();
-        //gameBoard.displayStructure();
         prepareBoard(BoardLayout.TURTLE);
 
 
@@ -35,10 +32,8 @@ public class MahjongBoard
     {
 
         gameBoard = new MahjongBoardLayout(layout);
-        ArrayList<TilePosition> positions = gameBoard.getLocations();
+        ArrayList<TileLoc> positionList = (ArrayList<TileLoc>) gameBoard.getLocations().clone();
         gui = new BoardGUI(gameBoard);
-        int placed = 0;
-
         while (deck.hasTiles())
         {
             // get the next tile off the deck
@@ -46,31 +41,48 @@ public class MahjongBoard
             // get a random position from the to-do list
             Random rand = new Random(System.nanoTime());
             int i = 0;
-            if(positions.size() > 1) i = rand.nextInt(positions.size()-1);
+            if(positionList.size() > 1) i = rand.nextInt(positionList.size()-1);
             // find the matching TilePosition on the gameBoard
-            TileLoc tl = positions.get(i).getLocation();
+            TileLoc tl = positionList.get(i);
             TilePosition tp = gameBoard.getTP(tl);
             // add the tile
             tp.setTile(new MahjongTile(tile.getSuit(), tile.getValue()));
             // drop the MahjongTile down as far as possible
             TileLoc finalPosition = dropTile(tp);
             // find and remove the used TilePosition from the to-do list
-            for (int nuke = 0; nuke < positions.size(); nuke++)
+            for (int nuke = 0; nuke < positionList.size(); nuke++)
             {
-                TilePosition nukeTP = positions.get(nuke);
-                if(nukeTP.row == finalPosition.row && nukeTP.col == finalPosition.col && nukeTP.layer == finalPosition.layer)
+                TileLoc nukeTL = positionList.get(nuke);
+                if(nukeTL.row == finalPosition.row && nukeTL.col == finalPosition.col && nukeTL.layer == finalPosition.layer)
                 {
                     //System.out.println("nuking: " + nukeTP.row + " " + nukeTP.col + " " + nukeTP.layer);
-                    positions.remove(nuke);
+                    positionList.remove(nuke);
                 }
             }
-            // add a button to the TP where the MahjongTile landed
-            TilePosition buttonAdded = gameBoard.getTP(finalPosition);
-            buttonAdded.setButton(gui.addButton(buttonAdded));
-            // look up. If there's a valid position directly or partially above, disable this button.
-            checkObstructed(buttonAdded);
-        }
+            // add a button to the TP
+            TilePosition newTP = gameBoard.getTP(finalPosition);
+            System.out.println("location L:" + newTP.layer + " R:" + newTP.row + " C:" + newTP.col + " hasTile: " + newTP.getTile().getSuit() + " " + newTP.getTile().getValue());
+            newTP.setButton(gui.makeButton(newTP));
 
+            // look up. If there's a valid position directly or partially above, disable this button.
+            checkObstructed(newTP);
+        }
+        // gameBoard.displayContents();
+        // now draw all the tiles, one layer at a time
+        ArrayList<TilePosition> positions = gameBoard.getPositions();
+        for (int layer = 0; layer < MAXLAY; layer++)
+        {
+            for (TilePosition tp : positions)
+            {
+
+                if(tp.layer == layer)
+                {
+                    System.out.println("location L:" + tp.layer + " R:" + tp.row + " C:" + tp.col + " hasTile: " + tp.hasTile()+ " " + tp.getTile().getSuit() + " : " + tp.getTile().getValue());
+
+                    gui.addButton(tp);
+                }
+            }
+        }
         gui.setGUIVisibility(true);
     }
 
@@ -92,7 +104,7 @@ public class MahjongBoard
                     || tpNE != null || tpNW != null || tpSE != null || tpSW != null)
             {
                 // There's a tile blocking me
-                tp.getButton().setEnabled(false);
+                tp.setEnabled(false);
             }
         }
 
@@ -108,7 +120,7 @@ public class MahjongBoard
             if ((tpE != null || tpNE != null || tpSE != null) && (tpW != null || tpNW != null | tpSW != null))
             {
                 // There's a tile blocking me
-                tp.getButton().setEnabled(false);
+                tp.setEnabled(false);
             }
         }
 

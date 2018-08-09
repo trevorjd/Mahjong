@@ -117,6 +117,8 @@ public class MahjongBoardLayout
                         if('1' - s.charAt(col) == 0)
                         {
                             positions[row][col][layer] = new TilePosition(new TileLoc(row, col, layer));
+                            TilePosition tp = positions[row][col][layer];
+                            //System.out.println("tp created at: L:" + tp.layer + " R:" + tp.row + " C:" + tp.col);
                         }
                     }
                 }
@@ -134,24 +136,28 @@ public class MahjongBoardLayout
                 for(int col = 0; col < MAXCOL; col++)
                 {
                     String s; String v;
-                    if(positions[row][col][layer].getTile() != null)
+                    if(positions[row][col][layer] != null)
                     {
-                        s = String.valueOf(positions[row][col][layer].getTile().getSuit());
-                    } else s = "null";
+                        if(positions[row][col][layer].getTile() != null)
+                        {
+                            s = String.valueOf(positions[row][col][layer].getTile().getSuit());
+                        } else s = "null";
 
-                    if(positions[row][col][layer].getTile() != null)
-                    {
-                        v = String.valueOf(positions[row][col][layer].getTile().getValue());
-                    } else v = "null";
-                    System.out.println("validpos: " + layer + " " + row + " " + col
-                            + " " + s + " " + v);
+                        if(positions[row][col][layer].getTile() != null)
+                        {
+                            v = String.valueOf(positions[row][col][layer].getTile().getValue());
+                        } else v = "null";
+                        System.out.println("validpos: " + layer + " " + row + " " + col
+                                + " " + s + " " + v);
+                    } else System.out.println("null tp at: L:" + layer + " R:" + row + " C:" + col);
+
                 }
             }
         }
     }
 
 
-    public void addTP(TilePosition tp)
+    public void setTP(TilePosition tp)
     {
         positions[tp.row][tp.col][tp.layer] = tp;
     }
@@ -190,7 +196,7 @@ public class MahjongBoardLayout
         {
             for (int col = 0; col < MAXCOL; col++)
             {
-                for (int lay = 0; lay < MAXCOL; lay++)
+                for (int lay = 0; lay < MAXLAY; lay++)
                 {
                     if(positions[row][col][lay] != null)
                     {
@@ -203,9 +209,9 @@ public class MahjongBoardLayout
         return result;
     }
 
-    protected ArrayList<TilePosition> getLocations()
+    protected ArrayList<TileLoc> getLocations()
     {
-        ArrayList<TilePosition> result = new ArrayList<TilePosition>();
+        ArrayList<TileLoc> result = new ArrayList<TileLoc>();
         for (int row = 0; row < MAXROW; row++)
         {
             for (int col = 0; col < MAXCOL; col++)
@@ -214,7 +220,7 @@ public class MahjongBoardLayout
                 {
                     if(positions[row][col][lay] != null)
                     {
-                        result.add(new TilePosition(new TileLoc(row, col, lay)));
+                        result.add(new TileLoc(row, col, lay));
                     }
                 }
 
