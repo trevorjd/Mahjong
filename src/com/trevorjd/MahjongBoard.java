@@ -25,6 +25,8 @@ public class MahjongBoard
 
     protected void init()
     {
+        SCORE = 0;
+        MAXSCORE = 0;
         if(gui != null) gui.destroy();
         deck = new MahjongDeck();
         deck.unsortedDeck();
