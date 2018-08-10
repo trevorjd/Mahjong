@@ -2,10 +2,7 @@ package com.trevorjd;
 
 import java.util.ArrayList;
 
-import static com.trevorjd.Mahjong.MAXCOL;
-import static com.trevorjd.Mahjong.MAXLAY;
-import static com.trevorjd.Mahjong.MAXROW;
-import static com.trevorjd.Mahjong.BoardLayout;
+import static com.trevorjd.Mahjong.*;
 public class MahjongBoardLayout
 {
     private TilePosition positions[][][];
@@ -15,10 +12,10 @@ public class MahjongBoardLayout
     {
         if (layout.equals(BoardLayout.TURTLE))
         {
-            System.out.println("Making a " + BoardLayout.TURTLE);
             MAXROW = 16;
             MAXCOL = 30;
             MAXLAY = 5;
+            MAXSCORE = 144 / 2;
             positions = new TilePosition[MAXROW][MAXCOL][MAXLAY];
             layoutDef = new String[MAXROW][MAXLAY];
 
@@ -227,5 +224,10 @@ public class MahjongBoardLayout
             }
         }
         return result;
+    }
+
+    protected void removeTP(TilePosition tp)
+    {
+        positions[tp.row][tp.col][tp.layer] = null;
     }
 }

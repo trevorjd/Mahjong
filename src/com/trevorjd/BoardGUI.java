@@ -1,6 +1,7 @@
 package com.trevorjd;
 
 import static com.trevorjd.Mahjong.*;
+import com.trevorjd.Mahjong.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -34,59 +35,25 @@ public class BoardGUI
         xOffset = 0.1;
         yOffset = 0.1;
         loadImages();
-        int gWidth = ((layout.getMAXCOL() + 2 + layout.getMAXLAY() / 2) * gridXSize) + 100;
+        int gWidth = ((layout.getMAXCOL() + 2 + layout.getMAXLAY() / 2) * gridXSize);
         int gHeight = (layout.getMAXROW() + 2 + layout.getMAXLAY() / 2) * gridYSize;
-        marginLeft = gridXSize + 100;
+        marginLeft = gridXSize;
         marginTop = gridYSize;
         f = new JFrame("Mahjong Solitaire");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         //f.setSize(gWidth, gHeight);
         layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(gWidth, gHeight));
         f.getContentPane().add(layeredPane);
         f.pack();
-        /*
-        Save for later - perhaps add a save game check before exit
+
         f.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
-                e.getWindow().dispose();
-                System.out.println("Goodbye!");
+                int result = okcancel("Really quit?");
+                if(result == 0) gameOver();
             }
         });
-        */
-
-        tileLabel = new JLabel();
-        tileLabel.setBounds(tWidth + 30, tHeight, 200, 20);
-        f.add(tileLabel);
-
-        JLabel tileLabelTitle = new JLabel("Tile:");
-        tileLabelTitle.setBounds(tWidth, tHeight, 50, 20);
-        f.add(tileLabelTitle);
-
-        xLabel = new JLabel();
-        xLabel.setBounds(tWidth + 40, tHeight * 2, 50, 20);
-        f.add(xLabel);
-
-        JLabel xLabelTitle = new JLabel("x Pos:");
-        xLabelTitle.setBounds(tWidth, tHeight * 2, 50, 20);
-        f.add(xLabelTitle);
-
-        yLabel = new JLabel();
-        yLabel.setBounds(tWidth + 40, tHeight * 3, 50, 20);
-        f.add(yLabel);
-
-        JLabel yLabelTitle = new JLabel("y Pos:");
-        yLabelTitle.setBounds(tWidth, tHeight * 3, 50, 20);
-        f.add(yLabelTitle);
-
-        zLabel = new JLabel();
-        zLabel.setBounds(tWidth + 40, tHeight * 4, 50, 20);
-        f.add(zLabel);
-
-        JLabel zLabelTitle = new JLabel("z Pos:");
-        zLabelTitle.setBounds(tWidth, tHeight * 4, 50, 20);
-        f.add(zLabelTitle);
 
         f.setLayout(null);
     }
@@ -100,6 +67,48 @@ public class BoardGUI
         int ypos = tp.row * gridYSize + marginTop + (int) (tp.layer * gridYSize * yOffset);
         button.setBounds(xpos, ypos, tWidth, tHeight);
         button.setText("");
+
+        button.setVerticalTextPosition(SwingConstants.CENTER);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    board.tileClickResponder(tp);
+                }
+            }
+        );
+        return button;
+    }
+
+    protected void destroy()
+    {
+        f.dispose();
+    }
+
+    protected void gameOver()
+    {
+        int result = okcancel("You matched " + (MAXSCORE - SCORE) + " of " + MAXSCORE + "\nPlay again?");
+        if(result == 0) board.init(); else System.exit(0);
+    }
+
+    protected void gameOver(String message)
+    {
+        int result = okcancel(message + "\n" + "You matched " + (MAXSCORE - SCORE) + " of " + MAXSCORE + "\nPlay again?");
+        if(result == 0) board.init(); else System.exit(0);
+    }
+
+    private int okcancel(String message) {
+        int result = JOptionPane.showConfirmDialog((Component) null, message,
+                "Mahjong Solitaire", JOptionPane.OK_CANCEL_OPTION);
+        return result;
+    }
+
+    protected void addButton(TilePosition tp)
+    {
+        JButton button = tp.getButton();
+        button.setEnabled(tp.isEnabled());
+
         Image image;
         if (tp.getTile().getSuit().equals(TileSuit.SEASONS)
                 || tp.getTile().getSuit().equals(TileSuit.DRAGONS)
@@ -114,34 +123,21 @@ public class BoardGUI
             image = images.get(s);
         }
         Image newImage = image.getScaledInstance(button.getWidth(), button.getHeight(), Image.SCALE_SMOOTH);
+        if (!tp.isEnabled()) newImage = image.getScaledInstance(button.getWidth() *2 / 3, button.getHeight() *2 / 3, Image.SCALE_SMOOTH);
         ImageIcon icon = new ImageIcon(newImage);
         button.setIcon(icon);
-        //button.setDisabledIcon(icon);
-        button.setVerticalTextPosition(SwingConstants.CENTER);
-        button.setHorizontalTextPosition(SwingConstants.CENTER);
-        /*
-        button.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    System.out.println(tp.getTile().getSuit() + " " +
-                            tp.getTile().getValue() + " " +
-                            tp.layer + " " + tp.row + " " + tp.col);
-                }
-            }
-        );
-        */
-        return button;
-    }
+        button.setDisabledIcon(icon);
 
-    protected void addButton(TilePosition tp)
-    {
-        JButton button = tp.getButton();
-        button.setEnabled(tp.isEnabled());
+
         layeredPane.add(button, tp.layer);
     }
 
-    protected void setGUIVisibility(boolean visible)
+    protected void removeButton(TilePosition tp)
+    {
+        layeredPane.remove(tp.getButton());
+    }
+
+    protected void displayGUI(boolean visible)
     {
         f.setVisible(visible);
         f.validate();

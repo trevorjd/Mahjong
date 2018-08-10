@@ -5,6 +5,10 @@ public class Mahjong
     protected static int MAXROW;
     protected static int MAXCOL;
     protected static int MAXLAY;
+    protected static boolean DEBUG;
+    protected static int SCORE;
+    protected static int MAXSCORE;
+    protected static MahjongBoard board;
 
     protected enum TileSuit
     {
@@ -47,6 +51,25 @@ public class Mahjong
         DUMMY;
     }
 
+    protected enum RelativePosition
+    {
+        UP,
+        UPN,
+        UPS,
+        UPE,
+        UPW,
+        UPNE,
+        UPNW,
+        UPSE,
+        UPSW,
+        E,
+        W,
+        NE,
+        NW,
+        SE,
+        SW;
+    }
+
     protected enum BoardLayout
     {
         TURTLE;
@@ -54,6 +77,6 @@ public class Mahjong
 
     public static void main(String[] args)
     {
-        MahjongBoard b = new MahjongBoard();
+        board = new MahjongBoard();
     }
 }
